@@ -1,0 +1,122 @@
+ 🔒 Module 2: Thread Synchronization — the core of writing safe and correct multi-threaded programs.
+
+Let’s break this down step-by-step with code and challenges.
+
+🔥 2.1 Race Conditions
+A race condition happens when multiple threads access and modify shared data concurrently, leading to unpredictable results.
+
+❌ Example without synchronization:
+class Counter {
+    int count = 0;
+
+    public void increment() {
+        count++; // Not atomic — read-modify-write
+    }
+}
+
+public class RaceConditionDemo {
+    public static void main(String[] args) throws InterruptedException {
+        Counter counter = new Counter();
+
+        Runnable task = () -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.increment();
+            }
+        };
+
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+
+        System.out.println("Final count: " + counter.count); // Not always 2000 ❌
+    }
+}
+
+
+✅ 2.2 Synchronized Methods and Blocks
+✔ Fix with synchronized:
+
+class Counter {
+    int count = 0;
+
+    public synchronized void increment() {
+        count++;
+    }
+}
+Or using a synchronized block:
+
+class Counter {
+    int count = 0;
+
+    public void increment() {
+        synchronized (this) {
+            count++;
+        }
+    }
+}
+🔒 2.3 Intrinsic Locks and Monitor Concept
+Every object in Java has a monitor lock.
+
+When you enter a synchronized method/block, the thread acquires the lock on the object.
+
+Other threads are blocked until the lock is released.
+
+🔄 2.4 volatile vs synchronized
+| Feature                | `volatile`          | `synchronized`                               |
+| ---------------------- | ------------------- | -------------------------------------------- |
+| Guarantees visibility? | ✅ Yes               | ✅ Yes                                        |
+| Guarantees atomicity?  | ❌ No                | ✅ Yes                                        |
+| Locking involved?      | ❌ No                | ✅ Yes (implicit lock)                        |
+| Use case               | Flag/status sharing | Shared state updates (read-modify-write ops) |
+
+
+
+
+
+
+
+
+What is the Use of join() in Java Threads?
+The join() method in Java is used to pause the execution of the current thread until the target thread completes its execution.
+
+thread.join();           // waits indefinitely for thread to finish
+thread.join(milliseconds);  // waits at most the given time
+
+
+public class JoinExample {
+    public static void main(String[] args) throws InterruptedException {
+        Thread worker = new Thread(() -> {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println("Worker thread: " + i);
+                try { Thread.sleep(500); } catch (InterruptedException e) {}
+            }
+        });
+
+        worker.start();
+
+        // Main thread waits for worker to finish
+        worker.join();  // <- blocks here until worker completes
+
+        System.out.println("Main thread resumes after worker is done.");
+    }
+}
+
+
+
+
+
+
+
+Difference B/W Thread.sleep() vs Thread.join()
+
+
+
+| Feature                       | `Thread.sleep()`                           | `Thread.join()`                                    |
+| ----------------------------- | ------------------------------------------ | -------------------------------------------------- |
+| 🔧 Purpose                    | Pauses **current thread** for a fixed time | Waits for **another thread** to finish execution   |
+| 🧠 Who is blocked?            | The **current thread** calling `sleep()`   | The **current thread** calling `join()` on another |
+| ⏱ Delay type                  | **Time-based delay**                       | **Completion-based delay**                         |
+| 🔄 Use Case                   | Introduce a delay, simulate wait           | Thread coordination, dependency between threads    |
+| 💥 Throws?                    | Yes, `InterruptedException`                | Yes, `InterruptedException`                        |
+| 🧵 Control over other thread? | ❌ No (doesn’t affect other threads)        | ✅ Yes (waits for another thread to complete)       |

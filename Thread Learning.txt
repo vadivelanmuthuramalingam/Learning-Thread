@@ -1,0 +1,124 @@
+🧩 Module 1: Java Threading Fundamentals (Recap)
+Creating threads: Thread, Runnable, Callable
+
+Thread lifecycle: NEW, RUNNABLE, WAITING, TIMED_WAITING, BLOCKED, TERMINATED
+
+Thread methods: start(), sleep(), join(), interrupt()
+
+✅ Exercise: Implement a multi-threaded program with 3 threads printing messages concurrently.
+
+
+🔒 Module 2: Thread Synchronization
+Race conditions
+
+Synchronized methods/blocks
+
+Intrinsic locks and monitor concept
+
+volatile vs synchronized
+
+Thread-safe class design
+
+✅ Example: Bank account balance update using multiple threads (with and without synchronization).
+
+✅ Challenge: Create a class-safe shared counter that is incremented concurrently by 100 threads.
+
+
+
+⚙️ Module 3: java.util.concurrent Core Components
+ExecutorService, Executors
+
+Callable, Future, invokeAll, invokeAny
+
+Thread pools: FixedThreadPool, CachedThreadPool, ScheduledThreadPool
+
+CompletionService
+
+✅ Example: Submit tasks to a thread pool and collect results with Future.
+
+✅ Challenge: Build a thread pool that downloads pages in parallel and returns content size.
+
+
+
+
+🧱 Module 4: Locks and Advanced Synchronization
+ReentrantLock, ReadWriteLock
+
+tryLock() and lock fairness
+
+Condition objects (wait/notify replacement)
+
+StampedLock for better performance
+
+✅ Example: Producer-consumer using ReentrantLock and Condition.
+
+✅ Challenge: Build a read-write data structure using ReadWriteLock for concurrent access.
+
+
+
+
+🚦 Module 5: Coordination and Communication
+wait(), notify(), notifyAll()
+
+BlockingQueue, ArrayBlockingQueue, LinkedBlockingQueue
+
+CountDownLatch, CyclicBarrier
+
+Semaphore, Exchanger, Phaser
+
+✅ Example: Use CountDownLatch to wait for multiple services to initialize.
+
+✅ Challenge: Simulate a multi-player game start using CyclicBarrier.
+
+
+
+🛠️ Module 6: Concurrency Utilities
+ConcurrentHashMap, CopyOnWriteArrayList, Atomic* classes
+
+LongAdder, DoubleAccumulator
+
+ThreadLocal vs InheritableThreadLocal
+
+ForkJoinPool, RecursiveTask, RecursiveAction
+
+✅ Example: Parallel sum using ForkJoinPool.
+
+✅ Challenge: Use ThreadLocal to store transaction context in concurrent request handling.
+
+
+
+
+⚡ Module 7: Reactive & Virtual Threading (Loom)
+Introduction to Project Loom (Java 21+)
+
+Thread.startVirtualThread(...)
+
+Structured concurrency
+
+Comparison: platform vs virtual threads
+
+✅ Example: Create 100,000 virtual threads (without OOM).
+
+✅ Challenge: Build a reactive-style HTTP client using virtual threads.
+
+
+
+🧪 Module 8: Debugging & Tuning
+Thread dump analysis
+
+Deadlock detection & resolution
+
+Performance tuning (GC, thread starvation)
+
+Java Flight Recorder & VisualVM
+
+Lock contention analysis
+
+✅ Exercise: Create a deadlock and resolve it using ordered locking.
+
+
+
+
+
+
+
