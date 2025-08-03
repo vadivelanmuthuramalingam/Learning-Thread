@@ -1,0 +1,148 @@
+⚙️ Module 3: java.util.concurrent Core Components – the professional way to manage threads in modern Java.
+
+Let’s explore Java’s high-level threading API: ExecutorService, Callable, Future, and more.
+
+🔧 3.1 What is ExecutorService?
+A high-level thread pool manager.
+
+You submit tasks and it handles the thread lifecycle.
+
+Use instead of new Thread(...).
+
+ExecutorService executor = Executors.newFixedThreadPool(5);
+executor.submit(() -> System.out.println("Task executed"));
+executor.shutdown();
+🧠 3.2 Thread Pools
+| Pool Type             | Method                                | Behavior                               |
+| --------------------- | ------------------------------------- | -------------------------------------- |
+| Fixed Thread Pool     | `Executors.newFixedThreadPool(n)`     | Reuses **n** threads                   |
+| Cached Thread Pool    | `Executors.newCachedThreadPool()`     | Creates threads as needed, reuses idle |
+| Scheduled Thread Pool | `Executors.newScheduledThreadPool(n)` | For **delayed or periodic** execution  |
+
+
+
+📦 3.3 Callable and Future
+Unlike Runnable, Callable<T> returns a result and can throw exceptions.
+
+Callable<String> task = () -> {
+    Thread.sleep(1000);
+    return "Result from thread";
+};
+
+ExecutorService executor = Executors.newSingleThreadExecutor();
+Future<String> future = executor.submit(task);
+
+// Wait and get result
+System.out.println("Result: " + future.get());
+executor.shutdown();
+
+
+
+🔁 3.4 invokeAll() and invokeAny()
+List<Callable<String>> tasks = List.of(
+    () -> "Task 1",
+    () -> "Task 2",
+    () -> "Task 3"
+);
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+
+// invokeAll: waits for **all tasks** and returns a list of Future
+List<Future<String>> results = executor.invokeAll(tasks);
+for (Future<String> f : results) {
+    System.out.println(f.get());
+}
+
+// invokeAny: returns the **result of the first successfully completed task**
+String result = executor.invokeAny(tasks);
+System.out.println("First result: " + result);
+
+executor.shutdown();
+
+
+📬 3.5 CompletionService – Combine Executor + Queue
+Helps you retrieve results as they complete, not in submission order.
+
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+CompletionService<String> service = new ExecutorCompletionService<>(executor);
+
+for (int i = 0; i < 5; i++) {
+    int id = i;
+    service.submit(() -> {
+        Thread.sleep(new Random().nextInt(1000));
+        return "Task-" + id;
+    });
+}
+
+for (int i = 0; i < 5; i++) {
+    Future<String> result = service.take();  // blocks until a task completes
+    System.out.println("Completed: " + result.get());
+}
+
+executor.shutdown();
+
+
+
+
+
+
+✅ Challenge: Download Web Pages in Parallel & Return Size
+🧪 Code:
+
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class ParallelDownloader {
+
+    public static void main(String[] args) throws InterruptedException {
+        List<String> urls = List.of(
+            "https://www.google.com",
+            "https://www.wikipedia.org",
+            "https://www.openai.com"
+        );
+
+        ExecutorService pool = Executors.newFixedThreadPool(3);
+
+        List<Callable<String>> tasks = new ArrayList<>();
+        for (String url : urls) {
+            tasks.add(() -> {
+                URL u = new URL(url);
+                try (Scanner s = new Scanner(u.openStream())) {
+                    StringBuilder content = new StringBuilder();
+                    while (s.hasNext()) content.append(s.nextLine());
+                    return url + " size: " + content.length();
+                }
+            });
+        }
+
+        List<Future<String>> results = pool.invokeAll(tasks);
+
+        for (Future<String> f : results) {
+            try {
+                System.out.println(f.get());
+            } catch (ExecutionException e) {
+                System.out.println("Error fetching: " + e.getMessage());
+            }
+        }
+
+        pool.shutdown();
+    }
+}
+
+
+
+
+
+
+🧠 Summary
+
+| Component           | Purpose                                  |
+| ------------------- | ---------------------------------------- |
+| `ExecutorService`   | Manages thread pools and task submission |
+| `Callable<T>`       | Task with a return value                 |
+| `Future<T>`         | Handle to get result of async task       |
+| `invokeAll`         | Run multiple tasks and wait for all      |
+| `invokeAny`         | Return the result of the fastest task    |
+| `CompletionService` | Retrieve completed tasks out-of-order    |
